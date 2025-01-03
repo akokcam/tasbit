@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      Role
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projects  Project[]
+  files     File[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  status      ProjectStatus
+  progress    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  student     User     @relation(fields: [studentId], references: [id])
+  studentId   String
+  advisor     User     @relation(name: "advisorProjects", fields: [advisorId], references: [id])
+  advisorId   String
+  tasks       Task[]
+  meetings    Meeting[]
+  files       File[]
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  status      TaskStatus
+  deadline    DateTime
+  feedback    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+}
+
+model Meeting {
+  id           String        @id @default(cuid())
+  scheduledFor DateTime
+  status       MeetingStatus
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  project      Project       @relation(fields: [projectId], references: [id])
+  projectId    String
+}
+
+model File {
+  id         String   @id @default(cuid())
+  name       String
+  url        String
+  uploadedAt DateTime @default(now())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  uploadedBy User     @relation(fields: [userId], references: [id])
+  userId     String
+}
+
+enum Role {
+  STUDENT
+  ADVISOR
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
