@@ -1,3 +1,6 @@
+"use client"
+
+import { Bell, User } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -7,13 +10,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Bell, User } from 'lucide-react'
+import { useToast } from "@/components/ui/use-toast"
 
 export function TopBar() {
+  const { toast } = useToast()
+
   return (
-    <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
+    <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-background px-6 dark:bg-gray-800/40">
       <div className="flex flex-1 items-center justify-end space-x-4">
-        <Button variant="ghost" size="icon">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            toast({
+              title: "Notifications",
+              description: "No new notifications",
+            })
+          }}
+        >
           <Bell className="h-5 w-5" />
           <span className="sr-only">Notifications</span>
         </Button>
