@@ -1,8 +1,4 @@
-import { Inter } from 'next/font/google'
-import { SessionProvider } from "next-auth/react"
 import { Toaster } from "@/components/ui/toaster"
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
@@ -11,11 +7,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <SessionProvider>
-          {children}
-          <Toaster />
-        </SessionProvider>
+      <body>
+        {children}
+        <Toaster />
       </body>
     </html>
   )
