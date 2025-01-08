@@ -6,12 +6,12 @@ export default withAuth(
     const token = req.nextauth.token
     const path = req.nextUrl.pathname
 
-    if (path.startsWith("/advisor") && token?.role !== "advisor") {
-      return NextResponse.redirect(new URL("/student", req.url))
+    if (path.startsWith("/advisor") && token?.role !== "ADVISOR") {
+      return NextResponse.redirect(new URL("/unauthorized", req.url))
     }
 
-    if (path.startsWith("/student") && token?.role !== "student") {
-      return NextResponse.redirect(new URL("/advisor", req.url))
+    if (path.startsWith("/student") && token?.role !== "STUDENT") {
+      return NextResponse.redirect(new URL("/unauthorized", req.url))
     }
   },
   {
@@ -22,6 +22,6 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ["/advisor/:path*", "/student/:path*"]
+  matcher: ["/advisor/:path*", "/student/:path*", "/api/:path*"]
 }
 

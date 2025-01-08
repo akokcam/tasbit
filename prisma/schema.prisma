@@ -8,36 +8,36 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  role      Role
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  projects  Project[]
-  files     File[]
+  id       String    @id @default(uuid())
+  email    String    @unique
+  name     String
+  role     Role
+  password String
+  projects Project[]
+  files    File[]
 }
 
 model Project {
-  id          String   @id @default(cuid())
+  id          String    @id @default(uuid())
   title       String
   description String
-  status      ProjectStatus
-  progress    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  student     User     @relation(fields: [studentId], references: [id])
   studentId   String
-  advisor     User     @relation(name: "advisorProjects", fields: [advisorId], references: [id])
+  student     User      @relation(fields: [studentId], references: [id])
   advisorId   String
+  advisor     User      @relation(name: "AdvisorProjects", fields: [advisorId], references: [id])
+  status      Status
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  progress    Int
   tasks       Task[]
   meetings    Meeting[]
   files       File[]
 }
 
 model Task {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
   title       String
   description String
   status      TaskStatus
@@ -45,30 +45,26 @@ model Task {
   feedback    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  project     Project  @relation(fields: [projectId], references: [id])
-  projectId   String
 }
 
 model Meeting {
-  id           String        @id @default(cuid())
+  id           String        @id @default(uuid())
+  projectId    String
+  project      Project       @relation(fields: [projectId], references: [id])
   scheduledFor DateTime
   status       MeetingStatus
   notes        String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  project      Project       @relation(fields: [projectId], references: [id])
-  projectId    String
 }
 
 model File {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
   name       String
   url        String
+  uploadedBy String
+  user       User     @relation(fields: [uploadedBy], references: [id])
   uploadedAt DateTime @default(now())
-  project    Project  @relation(fields: [projectId], references: [id])
-  projectId  String
-  uploadedBy User     @relation(fields: [userId], references: [id])
-  userId     String
 }
 
 enum Role {
@@ -76,7 +72,7 @@ enum Role {
   ADVISOR
 }
 
-enum ProjectStatus {
+enum Status {
   ACTIVE
   COMPLETED
 }

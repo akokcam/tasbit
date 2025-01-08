@@ -11,7 +11,9 @@ export default function AdvisorLayout({
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <TopBar />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6">
+          {children}
+        </main>
       </div>
     </div>
   )

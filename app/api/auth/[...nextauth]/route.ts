@@ -1,18 +1,16 @@
-import NextAuth from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client"
-import { compare } from "bcrypt"
+import prisma from "@/lib/prisma"
+import bcrypt from "bcrypt"
 
-const prisma = new PrismaClient()
-
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
@@ -30,7 +28,7 @@ const handler = NextAuth({
           return null
         }
 
-        const isPasswordValid = await compare(credentials.password, user.password)
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
 
         if (!isPasswordValid) {
           return null
@@ -57,15 +55,17 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (session?.user) {
-        session.user.role = token.role
+        session.user.role = token.role as string
       }
       return session
     }
   },
   pages: {
-    signIn: '/auth/signin',
+    signIn: "/login",
   },
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
 
