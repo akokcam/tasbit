@@ -1,62 +1,46 @@
-"use client"
-
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, GraduationCap } from 'lucide-react'
+import { cn } from "@/lib/utils"
+import { GraduationCap, Home, Users } from 'lucide-react'
+import Link from "next/link"
 
-type Student = {
-  id: string
-  name: string
-  project: string
-}
-
-const students: Student[] = [
-  { id: "1", name: "Alice Johnson", project: "AI in Healthcare" },
-  { id: "2", name: "Bob Smith", project: "Renewable Energy Systems" },
-  { id: "3", name: "Charlie Brown", project: "Cybersecurity in IoT" },
-  // Add more students as needed
+const sidebarItems = [
+  { icon: Home, label: "Dashboard", href: "/advisor" },
+  { icon: Users, label: "Students", href: "/advisor/students" },
+  { icon: GraduationCap, label: "Projects", href: "/advisor/projects" },
 ]
 
 export function Sidebar() {
-  const [searchTerm, setSearchTerm] = useState("")
-
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold flex items-center">
-          <GraduationCap className="mr-2" />
-          Students
-        </h2>
-      </div>
-      <div className="p-4">
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-slate-500" />
-          <Input
-            placeholder="Search students"
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
+      <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="flex h-[60px] items-center border-b px-6">
+          <Link className="flex items-center gap-2 font-semibold" href="#">
+            <GraduationCap className="h-6 w-6" />
+            <span className="">Thesis Management</span>
+          </Link>
         </div>
+        <ScrollArea className="flex-1 px-3">
+          <div className="space-y-1 p-2">
+            {sidebarItems.map((item) => (
+              <Button
+                key={item.href}
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start",
+                  "hover:bg-gray-200 dark:hover:bg-gray-700"
+                )}
+                asChild
+              >
+                <Link href={item.href}>
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </Link>
+              </Button>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="px-4 py-2">
-          {filteredStudents.map((student) => (
-            <div
-              key={student.id}
-              className="mb-2 p-2 rounded hover:bg-slate-100 cursor-pointer"
-            >
-              <h3 className="font-medium">{student.name}</h3>
-              <p className="text-sm text-slate-500">{student.project}</p>
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
     </div>
   )
 }
